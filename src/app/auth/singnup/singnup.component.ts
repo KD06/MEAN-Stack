@@ -9,7 +9,7 @@ import { AuthService } from '../auth.service';
 })
 export class SingnupComponent implements OnInit {
 
-  loading = true;
+  loading = false;
 
   constructor(private authService: AuthService) { }
 

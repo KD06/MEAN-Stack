@@ -33,17 +33,18 @@ router.post("", checkAuth, multer({storage: storage}).single('image'), (req, res
     const post = new Post({
       title: req.body.title,
       content: req.body.content,
-      imagePath: url + '/images/' +req.file.filename
+      imagePath: url + '/images/' +req.file.filename,
+      creator: req.userData.userId
     });
     post.save().then(createdPost =>{
-      console.log("save", createdPost);
-      console.log("path", post);
       res.status(201).json({
         message: 'Post added successfully',
         post: {
           ...createdPost,
           id: createdPost._id
         }
+      }).catch(err=>{
+        console.log("Post Error", err);
       });
     });
   });
@@ -58,11 +59,18 @@ router.put("/:id", checkAuth, multer({storage: storage}).single('image'),(req, r
         _id: req.body.id,
         title: req.body.title,
         content: req.body.content,
-        imagePath: imagePath
+        imagePath: imagePath,
+        creator: req.userData.userId
     });
     console.log("imagePath", imagePath);
-    Post.updateOne({_id: req.params.id}, post).then(response => {
+    Post.updateOne({_id: req.params.id, creator: req.userData.userId}, post).then(response => {
+      if(response.nModified > 0){
         res.status(200).json({message: "Post updated succesfully"});
+      } else {
+        res.status(401).json({message: "Not Authorized"})
+      }
+    }).catch(err => {
+      console.log("Update Error", err);
     })
 });
 
@@ -105,9 +113,13 @@ router.get("/:id", (req, res, next) => {
 });
 
 router.delete("/:id", checkAuth, (req, res, next)=>{
-    Post.deleteOne({_id: req.params.id}).then(
+    Post.deleteOne({_id: req.params.id, creator: req.userData.userId}).then(
         response => {
-        res.status(200).json({message: "Post deleted!"})
+          if(response.n > 0){
+            res.status(200).json({message: "Post deleted!"})
+          } else {
+            res.status(401).json({message: "Not Authorized"})
+          }
         }
 ).
 catch(error => console.log("error while deleting a post", error));

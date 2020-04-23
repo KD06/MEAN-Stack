@@ -42,7 +42,7 @@ export class PostCreateComponent implements OnInit{
         this.postService.getPost(this.postId).subscribe(
           postData => {
             this.loading = false;
-            this.post = { id: postData._id, title: postData.title, content: postData.content, imagePath: ""};
+            this.post = { id: postData._id, title: postData.title, content: postData.content, imagePath: "", creator: postData.creator};
             this.form.setValue({
               'title': this.post.title,
               'content': this.post.content,
