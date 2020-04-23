@@ -3,6 +3,7 @@ import { Post } from '../post.model';
 import { PostService } from '../post.service';
 import { Subscription } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-post-list',
@@ -18,8 +19,11 @@ export class PostListComponent implements OnInit, OnDestroy {
   currentPage = 1;
   pageSizeOptions = [1,2,5,10];
   private postSub: Subscription;
+  userIsAuthenticated = false;
+  private authListnerSubs: Subscription;
 
-  constructor(public postService: PostService){}
+  constructor(public postService: PostService,
+    private authService: AuthService){}
 
   ngOnInit() {
     this.postService.getPosts(this.postsPerPage, this.currentPage);
@@ -30,6 +34,12 @@ export class PostListComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.posts = postData.posts;
         this.totalPosts = postData.postCount;
+    })
+    this.userIsAuthenticated = this.authService.getIsAuth();
+    this.authListnerSubs = this.authService
+    .getAuthStatusListner()
+    .subscribe(isAuthenticated => {
+      this.userIsAuthenticated = isAuthenticated;
     })
   }
 
@@ -48,6 +58,7 @@ export class PostListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(){
     this.postSub.unsubscribe();
+    this.authListnerSubs.unsubscribe();
   }
 
 }
