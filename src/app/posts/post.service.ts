@@ -3,7 +3,9 @@ import { Subject } from "rxjs";
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { Injector, Injectable } from "@angular/core";
 
+@Injectable({ providedIn: "root" })
 export class PostService{
 
     private posts: Post[] = [];
