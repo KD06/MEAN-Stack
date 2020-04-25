@@ -12,10 +12,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use("/images", express.static(path.join("backend/images")));
 
-
-mongoose.connect("mongodb+srv://DILLIK:V4z7nsSChQegE6rD@cluster0-ypl1y.mongodb.net/node-angular",
-{useNewUrlParser: true, useUnifiedTopology: true}).
-then(
+mongoose.connect(
+  "mongodb+srv://DILLIK:"+process.env.MONGO_ATLAS_PW +"@cluster0-ypl1y.mongodb.net/node-angular",
+  {useNewUrlParser: true, useUnifiedTopology: true}
+  ).then(
   response => { console.log("Connected to database");
 }).catch(error=>{
   console.log("Connection failed!", error)
