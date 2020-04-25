@@ -37,7 +37,7 @@ exports.updatePost = (req, res, next)=>{
         creator: req.userData.userId
     });
     Post.updateOne({_id: req.params.id, creator: req.userData.userId}, post).then(response => {
-      if(response.nModified > 0){
+      if(response.n > 0){
         res.status(200).json({message: "Post updated succesfully"});
       } else {
         res.status(401).json({message: "Not Authorized"})
@@ -71,6 +71,7 @@ exports.getPosts = (req, res, next) => {
             maxPosts: count
           });
       }).catch(err => {
+        console.log("err1", err);
         res.status(500).json({
             message: 'Fetching posts failed!'
           });
